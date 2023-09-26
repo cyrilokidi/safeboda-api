@@ -1,11 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { CreateDriverDto } from './dto/create-driver.dto';
 import { UpdateDriverDto } from './dto/update-driver.dto';
+import { DataSource, TypeORMError } from 'typeorm';
+import { Driver } from './entities/driver.entity';
 
 @Injectable()
 export class DriversService {
-  create(createDriverDto: CreateDriverDto) {
-    return 'This action adds a new driver';
+  constructor(private readonly dataSource: DataSource) {}
+
+  create(createDriverDto: CreateDriverDto): Promise<Driver> {
+    return this.dataSource.transaction(async (entityManager) => {
+      try {
+        const newDriver = new Driver();
+        newDriver.name = createDriverDto.name;
+        newDriver.phone = createDriverDto.phone;
+        return await entityManager.save(newDriver);
+      } catch (error: TypeORMError | any) {
+        if (
+          error instanceof TypeORMError &&
+          error['constraint'] === 'UQ_b97a5a68c766d2d1ec25e6a85b2'
+        )
+          throw new ConflictException(
+            `"${createDriverDto.phone}" is already available.`,
+          );
+        throw error;
+      }
+    });
   }
 
   findAll() {
