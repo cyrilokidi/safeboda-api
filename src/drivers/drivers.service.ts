@@ -31,7 +31,7 @@ export class DriversService {
     });
   }
 
-  suspend(driverId: string): Promise<Driver> {
+  suspend(driverId: string): Promise<void> {
     return this.dataSource.transaction(async (entityManager) => {
       const driver = await entityManager.findOneBy(Driver, {
         id: driverId,
@@ -40,7 +40,22 @@ export class DriversService {
       const driverSuspendUpdate = entityManager.merge(Driver, driver, {
         suspended: true,
       });
-      return await entityManager.save(driverSuspendUpdate);
+      await entityManager.save(driverSuspendUpdate);
+      return;
+    });
+  }
+
+  deleteSuspend(driverId: string): Promise<void> {
+    return this.dataSource.transaction(async (entityManager) => {
+      const driver = await entityManager.findOneBy(Driver, {
+        id: driverId,
+      });
+      if (!driver) throw new NotFoundException('Driver not found.');
+      const driverSuspendUpdate = entityManager.merge(Driver, driver, {
+        suspended: false,
+      });
+      await entityManager.save(driverSuspendUpdate);
+      return;
     });
   }
 }
