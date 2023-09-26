@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dbConfig } from './config/db.config';
 import { DriversModule } from './drivers/drivers.module';
 import { PassengersModule } from './passengers/passengers.module';
+import { RidesModule } from './rides/rides.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { PassengersModule } from './passengers/passengers.module';
     TypeOrmModule.forRootAsync(dbConfig),
     DriversModule,
     PassengersModule,
+    RidesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
