@@ -27,6 +27,14 @@ export class Driver {
   })
   phone: string;
 
+  @Column({
+    name: 'suspended',
+    type: 'boolean',
+    nullable: false,
+    default: false,
+  })
+  suspended: boolean;
+
   @CreateDateColumn({
     name: 'created_at',
     nullable: false,

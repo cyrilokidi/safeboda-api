@@ -1,6 +1,9 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateDriverDto } from './dto/create-driver.dto';
-import { UpdateDriverDto } from './dto/update-driver.dto';
 import { DataSource, TypeORMError } from 'typeorm';
 import { Driver } from './entities/driver.entity';
 
@@ -28,19 +31,16 @@ export class DriversService {
     });
   }
 
-  findAll() {
-    return `This action returns all drivers`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} driver`;
-  }
-
-  update(id: number, updateDriverDto: UpdateDriverDto) {
-    return `This action updates a #${id} driver`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} driver`;
+  suspend(driverId: string): Promise<Driver> {
+    return this.dataSource.transaction(async (entityManager) => {
+      const driver = await entityManager.findOneBy(Driver, {
+        id: driverId,
+      });
+      if (!driver) throw new NotFoundException('Driver not found.');
+      const driverSuspendUpdate = entityManager.merge(Driver, driver, {
+        suspended: true,
+      });
+      return await entityManager.save(driverSuspendUpdate);
+    });
   }
 }

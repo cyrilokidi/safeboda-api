@@ -1,15 +1,7 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Post, Body, Param, ParseUUIDPipe } from '@nestjs/common';
 import { DriversService } from './drivers.service';
 import { CreateDriverDto } from './dto/create-driver.dto';
-import { UpdateDriverDto } from './dto/update-driver.dto';
+import { Driver } from './entities/driver.entity';
 
 @Controller('drivers')
 export class DriversController {
@@ -20,23 +12,8 @@ export class DriversController {
     return this.driversService.create(createDriverDto);
   }
 
-  @Get()
-  findAll() {
-    return this.driversService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.driversService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDriverDto: UpdateDriverDto) {
-    return this.driversService.update(+id, updateDriverDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.driversService.remove(+id);
+  @Post(':id/suspended')
+  suspend(@Param('id', ParseUUIDPipe) driverId: string): Promise<Driver> {
+    return this.driversService.suspend(driverId);
   }
 }
