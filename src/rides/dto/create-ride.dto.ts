@@ -1,14 +1,6 @@
 import { IsUUID, IsNotEmpty, IsLatitude, IsLongitude } from 'class-validator';
 
 export class CreateRideDto {
-  @IsUUID()
-  @IsNotEmpty()
-  driverId: string;
-
-  @IsUUID()
-  @IsNotEmpty()
-  passengerId: string;
-
   @IsLatitude()
   @IsNotEmpty()
   pickupPointLatitude: number;

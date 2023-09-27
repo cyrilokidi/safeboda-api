@@ -29,14 +29,6 @@ export class Ride {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Driver, (driver) => driver.ride, {
-    nullable: false,
-  })
-  @JoinColumn({
-    name: 'driver_id',
-  })
-  driver: Driver;
-
   @ManyToOne(() => Passenger, (passenger) => passenger.ride, {
     nullable: false,
   })
@@ -44,6 +36,14 @@ export class Ride {
     name: 'passenger_id',
   })
   passenger: Passenger;
+
+  @ManyToOne(() => Driver, (driver) => driver.ride, {
+    nullable: false,
+  })
+  @JoinColumn({
+    name: 'driver_id',
+  })
+  driver: Driver;
 
   @Column({
     name: 'pickup_point_latitude',

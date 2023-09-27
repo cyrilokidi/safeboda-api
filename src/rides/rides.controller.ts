@@ -1,42 +1,30 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
+  ParseUUIDPipe,
+  Get,
 } from '@nestjs/common';
 import { RidesService } from './rides.service';
 import { CreateRideDto } from './dto/create-ride.dto';
-import { UpdateRideDto } from './dto/update-ride.dto';
+import { Ride } from './entities/ride.entity';
 
 @Controller('rides')
 export class RidesController {
   constructor(private readonly ridesService: RidesService) {}
 
-  @Post()
-  create(@Body() createRideDto: CreateRideDto) {
-    return this.ridesService.create(createRideDto);
+  @Post(':passengerId/:driverId')
+  create(
+    @Param('passengerId', ParseUUIDPipe) passengerId: string,
+    @Param('driverId', ParseUUIDPipe) driverId: string,
+    @Body() createRideDto: CreateRideDto,
+  ) {
+    return this.ridesService.create(passengerId, driverId, createRideDto);
   }
 
-  @Get()
-  findAll() {
-    return this.ridesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ridesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRideDto: UpdateRideDto) {
-    return this.ridesService.update(+id, updateRideDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ridesService.remove(+id);
+  @Get(':id/stop')
+  stopRide(@Param('id', ParseUUIDPipe) rideId: string): Promise<Ride> {
+    return this.ridesService.stop(rideId);
   }
 }
