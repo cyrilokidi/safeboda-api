@@ -4,7 +4,7 @@ import {
   Body,
   Param,
   ParseUUIDPipe,
-  Get,
+  Patch,
 } from '@nestjs/common';
 import { RidesService } from './rides.service';
 import { CreateRideDto } from './dto/create-ride.dto';
@@ -23,7 +23,7 @@ export class RidesController {
     return this.ridesService.create(passengerId, driverId, createRideDto);
   }
 
-  @Get(':id/stop')
+  @Patch(':id/stop')
   stopRide(@Param('id', ParseUUIDPipe) rideId: string): Promise<Ride> {
     return this.ridesService.stop(rideId);
   }
