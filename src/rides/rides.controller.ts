@@ -5,10 +5,14 @@ import {
   Param,
   ParseUUIDPipe,
   Patch,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { RidesService } from './rides.service';
 import { CreateRideDto } from './dto/create-ride.dto';
 import { Ride } from './entities/ride.entity';
+import { RidesPageOptionsDto } from './dto/rides-page-options.dto';
+import { RidesPageDto } from './dto/rides-page.dto';
 
 @Controller('rides')
 export class RidesController {
@@ -26,5 +30,12 @@ export class RidesController {
   @Patch(':id/stop')
   stopRide(@Param('id', ParseUUIDPipe) rideId: string): Promise<Ride> {
     return this.ridesService.stop(rideId);
+  }
+
+  @Get('ongoing')
+  findAll(
+    @Query() ridesPageOptionsDto: RidesPageOptionsDto,
+  ): Promise<RidesPageDto> {
+    return this.ridesService.findAll(ridesPageOptionsDto);
   }
 }

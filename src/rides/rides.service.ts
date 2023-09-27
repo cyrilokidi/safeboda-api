@@ -1,9 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRideDto } from './dto/create-ride.dto';
 import { ERideStatus, Ride } from './entities/ride.entity';
-import { DataSource } from 'typeorm';
+import { Brackets, DataSource } from 'typeorm';
 import { Driver } from 'src/drivers/entities/driver.entity';
 import { Passenger } from 'src/passengers/entities/passenger.entity';
+import { RidesPageOptionsDto } from './dto/rides-page-options.dto';
+import { RidesPageDto } from './dto/rides-page.dto';
+import { RidesPageMetaDto } from './dto/rides-page-meta.dto';
 
 @Injectable()
 export class RidesService {
@@ -49,5 +52,44 @@ export class RidesService {
       });
       return await entityManager.save(stopRideUpdate);
     });
+  }
+
+  async findAll(
+    ridesPageOptionsDto: RidesPageOptionsDto,
+  ): Promise<RidesPageDto> {
+    const queryBuilder = this.dataSource
+      .createQueryBuilder(Ride, 'ride')
+      .innerJoinAndSelect('ride.passenger', 'passenger')
+      .innerJoinAndSelect('ride.driver', 'driver')
+      .where('ride.status = :status', {
+        status: 'ongoing',
+      });
+
+    if (ridesPageOptionsDto.keyword)
+      queryBuilder.andWhere(
+        new Brackets((qb) =>
+          qb
+            .where('passenger.name ILIKE :keyword', {
+              keyword: `%${ridesPageOptionsDto.keyword}%`,
+            })
+            .orWhere('driver.name ILIKE :keyword', {
+              keyword: `%${ridesPageOptionsDto.keyword}%`,
+            }),
+        ),
+      );
+
+    queryBuilder
+      .select(['ride', 'passenger', 'driver'])
+      .orderBy(ridesPageOptionsDto.sort, ridesPageOptionsDto.order)
+      .skip(ridesPageOptionsDto.skip)
+      .take(ridesPageOptionsDto.take);
+
+    const itemCount = await queryBuilder.getCount();
+    const { entities } = await queryBuilder.getRawAndEntities();
+    const legacyVehiclesPageMetaDto = new RidesPageMetaDto({
+      itemCount,
+      ridesPageOptionsDto,
+    });
+    return new RidesPageDto(entities, legacyVehiclesPageMetaDto);
   }
 }
