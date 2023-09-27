@@ -4,10 +4,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
+export const DRIVER_PASSENGER_STATUS_ONGOING_UNIQUE_CONSTRAINT =
+  'driver_passenger_status_ongoing_unique_constraint';
 
 export enum ERideStatus {
   ['ONGOING'] = 'ongoing',
@@ -17,6 +21,10 @@ export enum ERideStatus {
 @Entity({
   name: 'rides',
 })
+// @Index(['driver', 'passenger', 'status'], {
+//   unique: true,
+//   where: '(status = "ongoing")',
+// })
 export class Ride {
   @PrimaryGeneratedColumn('uuid')
   id: string;
