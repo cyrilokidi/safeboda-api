@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { SigninDto } from './dto/signin.dto';
+import { LoginDto } from './dto/login.dto';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 
 export interface IAuthUser {
@@ -15,10 +15,10 @@ export interface IAccessTokenPayload {
 export class AuthService {
   constructor(private readonly jwtService: JwtService) {}
 
-  async signin(signin: SigninDto): Promise<IAuthUser> {
+  async login(loginDto: LoginDto): Promise<IAuthUser> {
     const isAdmin =
-      process.env.ADMIN_EMAIL === signin.email &&
-      process.env.ADMIN_PASSWORD === signin.password;
+      process.env.ADMIN_EMAIL === loginDto.email &&
+      process.env.ADMIN_PASSWORD === loginDto.password;
     if (!isAdmin) throw new UnauthorizedException();
     const accessTokenPayload: IAccessTokenPayload = {
       sub: process.env.ADMIN_EMAIL,
