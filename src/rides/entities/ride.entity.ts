@@ -1,10 +1,10 @@
 import { Driver } from 'src/drivers/entities/driver.entity';
 import { Passenger } from 'src/passengers/entities/passenger.entity';
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
-  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -25,6 +25,7 @@ export enum ERideStatus {
 //   unique: true,
 //   where: '(status = "ongoing")',
 // })
+// @Check(`"passenger_id" IS NOT NULL AND "driver_id" IS NOT NULL AND "status" <> 'done'`)
 export class Ride {
   @PrimaryGeneratedColumn('uuid')
   id: string;
