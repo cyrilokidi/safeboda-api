@@ -7,6 +7,8 @@ import { dbConfig } from './config/db.config';
 import { DriversModule } from './drivers/drivers.module';
 import { PassengersModule } from './passengers/passengers.module';
 import { RidesModule } from './rides/rides.module';
+import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -14,9 +16,11 @@ import { RidesModule } from './rides/rides.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync(dbConfig),
+    JwtModule.register({ global: true }),
     DriversModule,
     PassengersModule,
     RidesModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
