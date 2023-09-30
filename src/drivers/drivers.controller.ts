@@ -12,7 +12,9 @@ import { DriversService } from './drivers.service';
 import { CreateDriverDto } from './dto/create-driver.dto';
 import { Driver } from './entities/driver.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Drivers')
 @Controller('drivers')
 export class DriversController {
   constructor(private readonly driversService: DriversService) {}

@@ -2,25 +2,26 @@
 
 Safeboda NodeJS backend API coding challenge.
 
+> This application is developed using [NestJs](https://nestjs.com/). More information of it's usage can be found on their [website](https://nestjs.com/).
+
 ## Details
 
-| Item      | Description                                  |
-| --------- | -------------------------------------------- |
-| Developer | @[cyrilokidi](https://github.com/cyrilokidi) |
-| Framework | [Nest JS](https://nestjs.com/)               |
-| Database  | [Postgres](https://www.postgresql.org/)      |
-| ORM       | [TypeORM](https://typeorm.io/)               |
+| Item      | Description                                         |
+| --------- | --------------------------------------------------- |
+| Developer | @[cyrilokidi](https://github.com/cyrilokidi)        |
+| Contact   | [okidicyril@gmail.com](mailto:okidicyril@gmail.com) |
+| Framework | [Nest JS](https://nestjs.com/)                      |
+| Database  | [Postgres](https://www.postgresql.org/)             |
+| ORM       | [TypeORM](https://typeorm.io/)                      |
 
 ## Setup
 
-> This application is developed using [NestJs](https://nestjs.com/). More information of it's usage can be found on their [website](https://nestjs.com/).
-
-### Environment
-
-con
-Create `.env` file at the root of the project folder, then copy and paste the contents below into the new file (while replacing with variable values with of your local environment).
+- Create `.env` file at the root of the project folder.
+- Copy and paste the content below into the new file (Replace with your relevant environment values where necessary).
 
 ```bash
+# Environment variables.
+
 # App. config.
 NODE_ENV=production
 SERVER_PORT=3000
@@ -41,7 +42,7 @@ ADMIN_PASSWORD=password
 JWT_AUTH_ACCESS_TOKEN_SECRET=JwtAuthAccessTokenSecret
 ```
 
-### Start
+## Start
 
 Start the application by running the command below in the terminal.
 
@@ -60,3 +61,7 @@ $ docker-compose up prod --build -V
 ```bash
 DB_HOST=db
 ```
+
+## API
+
+Access API endpoints documentation at `<baseUrl>/api` which uses [swagger](https://swagger.io/).
