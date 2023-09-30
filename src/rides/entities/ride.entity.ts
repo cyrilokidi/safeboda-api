@@ -1,17 +1,14 @@
 import { Driver } from 'src/drivers/entities/driver.entity';
 import { Passenger } from 'src/passengers/entities/passenger.entity';
 import {
-  Check,
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-
-export const DRIVER_PASSENGER_STATUS_ONGOING_UNIQUE_CONSTRAINT =
-  'driver_passenger_status_ongoing_unique_constraint';
 
 export enum ERideStatus {
   ['ONGOING'] = 'ongoing',
@@ -21,17 +18,22 @@ export enum ERideStatus {
 @Entity({
   name: 'rides',
 })
-// @Index(['driver', 'passenger', 'status'], {
-//   unique: true,
-//   where: '(status = "ongoing")',
-// })
-// @Check(`"passenger_id" IS NOT NULL AND "driver_id" IS NOT NULL AND "status" <> 'done'`)
+@Index(['passenger', 'status'], {
+  unique: true,
+  where: `("status" <> 'done')`,
+})
+@Index(['driver', 'status'], {
+  unique: true,
+  where: `("status" <> 'done')`,
+})
 export class Ride {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @ManyToOne(() => Passenger, (passenger) => passenger.ride, {
     nullable: false,
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({
     name: 'passenger_id',
@@ -40,6 +42,8 @@ export class Ride {
 
   @ManyToOne(() => Driver, (driver) => driver.ride, {
     nullable: false,
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({
     name: 'driver_id',

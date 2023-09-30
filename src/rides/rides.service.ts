@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateRideDto } from './dto/create-ride.dto';
 import { ERideStatus, Ride } from './entities/ride.entity';
-import { Brackets, DataSource } from 'typeorm';
+import { Brackets, DataSource, TypeORMError } from 'typeorm';
 import { Driver } from 'src/drivers/entities/driver.entity';
 import { Passenger } from 'src/passengers/entities/passenger.entity';
 import { RidesPageOptionsDto } from './dto/rides-page-options.dto';
@@ -35,7 +39,17 @@ export class RidesService {
         newRide.destinationLatitude = createRideDto.destinationLatitude;
         newRide.destinationLongitude = createRideDto.destinationLongitude;
         return await entityManager.save(newRide);
-      } catch (error: any) {
+      } catch (error: TypeORMError | any) {
+        if (
+          error instanceof TypeORMError &&
+          error['constraint'] === 'IDX_4a0bc9a1a754b7ac39519858f4'
+        )
+          throw new ConflictException('Passenger has ongoing ride.');
+        if (
+          error instanceof TypeORMError &&
+          error['constraint'] === 'IDX_67831409d43797c8d62770f7b2'
+        )
+          throw new ConflictException('Driver has ongoing ride.');
         throw error;
       }
     });
