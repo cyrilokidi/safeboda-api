@@ -33,7 +33,7 @@ services:
       - webnet
     depends_on:
       - postgres
-  postgres:
+  db:
     container_name: safeboda-db
     image: postgres:14-alpine
     networks:
