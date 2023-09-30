@@ -1,7 +1,9 @@
+import { Ride } from 'src/rides/entities/ride.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -40,4 +42,9 @@ export class Driver {
     nullable: false,
   })
   createdAt: Date;
+
+  @OneToMany(() => Ride, (ride) => ride.driver, {
+    cascade: true,
+  })
+  ride?: Ride[];
 }
