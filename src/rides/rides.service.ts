@@ -6,8 +6,8 @@ import {
 import { CreateRideDto } from './dto/create-ride.dto';
 import { ERideStatus, Ride } from './entities/ride.entity';
 import { Brackets, DataSource, TypeORMError } from 'typeorm';
-import { Driver } from 'src/drivers/entities/driver.entity';
-import { Passenger } from 'src/passengers/entities/passenger.entity';
+import { Driver } from '../drivers/entities/driver.entity';
+import { Passenger } from '../passengers/entities/passenger.entity';
 import { RidesPageOptionsDto } from './dto/rides-page-options.dto';
 import { RidesPageDto } from './dto/rides-page.dto';
 import { RidesPageMetaDto } from './dto/rides-page-meta.dto';

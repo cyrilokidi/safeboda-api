@@ -14,7 +14,7 @@ import { CreateRideDto } from './dto/create-ride.dto';
 import { Ride } from './entities/ride.entity';
 import { RidesPageOptionsDto } from './dto/rides-page-options.dto';
 import { RidesPageDto } from './dto/rides-page.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Rides')
