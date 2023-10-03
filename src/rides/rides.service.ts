@@ -55,7 +55,7 @@ export class RidesService {
     });
   }
 
-  stop(rideId: string): Promise<Ride> {
+  stopRide(rideId: string): Promise<Ride> {
     return this.dataSource.transaction(async (entityManager) => {
       const ride = await entityManager.findOneBy(Ride, {
         id: rideId,

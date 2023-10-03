@@ -19,6 +19,7 @@ describe('RidesController', () => {
           ...createRideDto,
         }),
     ),
+    stopRide: jest.fn((rideId: string) => Promise.resolve({ rideId })),
     findAll: jest.fn((ridesPageOptionsDto: RidesPageOptionsDto) =>
       Promise.resolve({ ...ridesPageOptionsDto }),
     ),
@@ -58,6 +59,11 @@ describe('RidesController', () => {
       driverId,
       ...createRideDto,
     });
+  });
+
+  it('should stop an ongoing ride', async () => {
+    const rideId = '1';
+    expect(await ridesController.stopRide(rideId)).toEqual({ rideId });
   });
 
   it('should find all ongoing rides', async () => {

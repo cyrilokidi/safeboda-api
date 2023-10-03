@@ -35,7 +35,7 @@ export class RidesController {
   @UseGuards(AuthGuard)
   @Patch(':id/stop')
   stopRide(@Param('id', ParseUUIDPipe) rideId: string): Promise<Ride> {
-    return this.ridesService.stop(rideId);
+    return this.ridesService.stopRide(rideId);
   }
 
   @UseGuards(AuthGuard)
