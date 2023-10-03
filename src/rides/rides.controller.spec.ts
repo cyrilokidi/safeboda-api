@@ -2,13 +2,18 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RidesController } from './rides.controller';
 import { RidesService } from './rides.service';
 import { AuthGuard } from '../auth/auth.guard';
+import { RidesPageOptionsDto } from './dto/rides-page-options.dto';
 
 describe('RidesController', () => {
-  let controller: RidesController;
+  let ridesController: RidesController;
 
   const mockAuthGuard = {};
 
-  const mockRidesService = {};
+  const mockRidesService = {
+    findAll: jest.fn((ridesPageOptionsDto: RidesPageOptionsDto) =>
+      Promise.resolve({ ...ridesPageOptionsDto }),
+    ),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,10 +26,17 @@ describe('RidesController', () => {
       .useValue(mockRidesService)
       .compile();
 
-    controller = module.get<RidesController>(RidesController);
+    ridesController = module.get<RidesController>(RidesController);
   });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
+    expect(ridesController).toBeDefined();
+  });
+
+  it('should find all ongoing rides', async () => {
+    const ridesPageOptionsDto: RidesPageOptionsDto = { skip: 0 };
+    expect(await ridesController.findAll(ridesPageOptionsDto)).toEqual({
+      ...ridesPageOptionsDto,
+    });
   });
 });
