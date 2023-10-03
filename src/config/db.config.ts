@@ -1,7 +1,7 @@
 import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
-import { Driver } from 'src/drivers/entities/driver.entity';
-import { Passenger } from 'src/passengers/entities/passenger.entity';
-import { Ride } from 'src/rides/entities/ride.entity';
+import { Driver } from '../drivers/entities/driver.entity';
+import { Passenger } from '../passengers/entities/passenger.entity';
+import { Ride } from '../rides/entities/ride.entity';
 
 export const dbConfig: TypeOrmModuleAsyncOptions = {
   useFactory: () => ({
