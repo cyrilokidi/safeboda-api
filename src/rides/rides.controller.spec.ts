@@ -26,7 +26,7 @@ describe('RidesController', () => {
   };
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [RidesController],
       providers: [RidesService],
     })
@@ -36,7 +36,7 @@ describe('RidesController', () => {
       .useValue(mockRidesService)
       .compile();
 
-    ridesController = module.get<RidesController>(RidesController);
+    ridesController = moduleRef.get<RidesController>(RidesController);
   });
 
   it('should be defined', () => {

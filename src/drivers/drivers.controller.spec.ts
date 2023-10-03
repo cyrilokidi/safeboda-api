@@ -18,7 +18,7 @@ describe('DriversController', () => {
   const mockAuthGuard = {};
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [DriversController],
       providers: [DriversService],
     })
@@ -28,7 +28,7 @@ describe('DriversController', () => {
       .useValue(mockAuthGuard)
       .compile();
 
-    driversController = module.get<DriversController>(DriversController);
+    driversController = moduleRef.get<DriversController>(DriversController);
   });
 
   it('should be defined', () => {
