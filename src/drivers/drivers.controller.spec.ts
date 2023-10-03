@@ -5,10 +5,12 @@ import { AuthGuard } from '../auth/auth.guard';
 import { CreateDriverDto } from './dto/create-driver.dto';
 
 describe('DriversController', () => {
-  let controller: DriversController;
+  let driversController: DriversController;
 
   const mockDriversService = {
-    create: jest.fn((createDriverDto: CreateDriverDto) => createDriverDto),
+    create: jest.fn((createDriverDto: CreateDriverDto) =>
+      Promise.resolve({ ...createDriverDto }),
+    ),
   };
 
   const mockAuthGuard = {};
@@ -24,18 +26,18 @@ describe('DriversController', () => {
       .useValue(mockAuthGuard)
       .compile();
 
-    controller = module.get<DriversController>(DriversController);
+    driversController = module.get<DriversController>(DriversController);
   });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
+    expect(driversController).toBeDefined();
   });
 
-  it('should create a new driver', () => {
+  it('should create a new driver', async () => {
     const newDriver: CreateDriverDto = {
       name: 'John Doe',
       phone: '+254700000001',
     };
-    expect(controller.create(newDriver)).toEqual(newDriver);
+    expect(await driversController.create(newDriver)).toEqual({ ...newDriver });
   });
 });
