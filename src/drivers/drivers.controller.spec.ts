@@ -11,6 +11,8 @@ describe('DriversController', () => {
     create: jest.fn((createDriverDto: CreateDriverDto) =>
       Promise.resolve({ ...createDriverDto }),
     ),
+    suspend: jest.fn((driverId: string) => Promise.resolve(driverId)),
+    deleteSuspend: jest.fn((driverId: string) => Promise.resolve(driverId)),
   };
 
   const mockAuthGuard = {};
@@ -39,5 +41,15 @@ describe('DriversController', () => {
       phone: '+254700000001',
     };
     expect(await driversController.create(newDriver)).toEqual({ ...newDriver });
+  });
+
+  it('should suspend a driver', async () => {
+    const driverId = '1';
+    expect(await driversController.suspend(driverId)).toEqual(driverId);
+  });
+
+  it('should delete suspend for a driver', async () => {
+    const driverId = '1';
+    expect(await driversController.deleteSuspend(driverId)).toEqual(driverId);
   });
 });
