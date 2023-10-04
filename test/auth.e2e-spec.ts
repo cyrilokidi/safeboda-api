@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -23,19 +23,31 @@ describe('AuthController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+      }),
+    );
     await app.init();
   });
 
   describe('/auth/login (POST)', () => {
-    it('should signin user', () => {
+    it('should return access token', () => {
       const loginDto: LoginDto = {
-        email: 'okidicyril@gmail.com',
-        password: 'password',
+        email: process.env.ADMIN_EMAIL,
+        password: process.env.ADMIN_PASSWORD,
       };
-      return request(app.getHttpServer())
+      request(app.getHttpServer())
         .post('/auth/login')
         .send(loginDto)
         .expect(201);
+    });
+
+    it('should fail with bad request error', () => {
+      return request(app.getHttpServer())
+        .post('/auth/login')
+        .send({})
+        .expect(400);
     });
   });
 });
