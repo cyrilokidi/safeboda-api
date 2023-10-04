@@ -2,8 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { testDbConfig } from '../src/config/db.config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthModule } from '../src/auth/auth.module';
 import { LoginDto } from 'src/auth/dto/login.dto';
@@ -16,7 +14,6 @@ describe('AuthController (e2e)', () => {
       imports: [
         ConfigModule.forRoot({ isGlobal: true }),
         JwtModule.register({ global: true }),
-        TypeOrmModule.forRootAsync(testDbConfig),
         AuthModule,
       ],
       providers: [JwtService],
