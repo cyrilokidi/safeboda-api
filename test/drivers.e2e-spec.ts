@@ -45,16 +45,18 @@ describe('DriverController (e2e)', () => {
     accessToken = authResponse.body.accessToken as string;
   });
 
-  it('/ (POST)', async () => {
-    const createDriverDto: CreateDriverDto = {
-      name: 'John Doe',
-      phone: '+254700000001',
-    };
-    const response = await request(app.getHttpServer())
-      .post('/drivers')
-      .set('Authorization', `Bearer ${accessToken}`)
-      .send(createDriverDto);
-    expect(response.status).toBe(201);
+  describe('/ (POST)', () => {
+    it('should return new driver details', async () => {
+      const createDriverDto: CreateDriverDto = {
+        name: 'John Doe',
+        phone: '+254700000001',
+      };
+      const response = await request(app.getHttpServer())
+        .post('/drivers')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(createDriverDto);
+      expect(response.status).toBe(201);
+    });
   });
 
   afterAll(async () => {
