@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
-import { EPageOptionsOrder } from 'src/app.constants';
+import { EPageOptionsOrder } from '../app.constants';
 
 export abstract class PageOptionsDto {
   @IsEnum(EPageOptionsOrder)
