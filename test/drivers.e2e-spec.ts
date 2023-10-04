@@ -57,6 +57,25 @@ describe('DriverController (e2e)', () => {
         .send(createDriverDto);
       expect(response.status).toBe(201);
     });
+
+    it('should fail with unauthorized error', async () => {
+      const createDriverDto: CreateDriverDto = {
+        name: 'Jane Doe',
+        phone: '+254700000002',
+      };
+      const response = await request(app.getHttpServer())
+        .post('/drivers')
+        .send(createDriverDto);
+      expect(response.status).toBe(401);
+    });
+
+    it('should fail with bad request error', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/drivers')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({});
+      expect(response.status).toBe(400);
+    });
   });
 
   afterAll(async () => {
