@@ -40,24 +40,24 @@ describe('AuthController (e2e)', () => {
       expect(response.statusCode).toBe(201);
     });
 
-    it('should fail with bad request error', () => {
-      return request(app.getHttpServer())
+    it('should fail with bad request error', async () => {
+      const response = await request(app.getHttpServer())
         .post('/auth/login')
-        .send({})
-        .expect(400);
+        .send({});
+      expect(response.statusCode).toBe(400);
     });
 
-    it('should fail with unauthorized error', () => {
+    it('should fail with unauthorized error', async () => {
       const [emailUsername, emailDomain] = process.env.ADMIN_EMAIL.split('@');
       const reversedEmailUsername = emailUsername.split('').reverse().join('');
       const loginDto: LoginDto = {
         email: `${reversedEmailUsername}@${emailDomain}`,
         password: process.env.ADMIN_PASSWORD,
       };
-      request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .post('/auth/login')
-        .send(loginDto)
-        .expect(201);
+        .send(loginDto);
+      expect(response.statusCode).toBe(401);
     });
   });
 
