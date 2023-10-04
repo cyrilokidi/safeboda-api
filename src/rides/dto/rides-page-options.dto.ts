@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { PageOptionsDto } from 'src/dto/page-options.dto';
+import { PageOptionsDto } from '../../dto/page-options.dto';
 import { ERidesPageOptionsSort } from '../rides.constants';
 
 export class RidesPageOptionsDto extends PageOptionsDto {

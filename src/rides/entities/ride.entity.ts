@@ -1,5 +1,5 @@
-import { Driver } from 'src/drivers/entities/driver.entity';
-import { Passenger } from 'src/passengers/entities/passenger.entity';
+import { Driver } from '../../drivers/entities/driver.entity';
+import { Passenger } from '../../passengers/entities/passenger.entity';
 import {
   Column,
   CreateDateColumn,

@@ -1,13 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DriversService } from './drivers.service';
+import { DataSource } from 'typeorm';
 
 describe('DriversService', () => {
   let service: DriversService;
 
+  const mockDataSource = {};
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [DriversService],
-    }).compile();
+      providers: [DriversService, DataSource],
+    })
+      .overrideProvider(DataSource)
+      .useValue(mockDataSource)
+      .compile();
 
     service = module.get<DriversService>(DriversService);
   });

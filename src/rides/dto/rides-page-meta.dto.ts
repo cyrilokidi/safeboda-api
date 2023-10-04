@@ -1,4 +1,4 @@
-import { PageMetaDto } from 'src/dto/page-meta.dto';
+import { PageMetaDto } from '../../dto/page-meta.dto';
 import { RidesPageOptionsDto } from './rides-page-options.dto';
 import { ERidesPageOptionsSort } from '../rides.constants';
 
