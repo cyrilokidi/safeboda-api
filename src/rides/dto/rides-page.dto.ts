@@ -1,5 +1,5 @@
 import { IsArray } from 'class-validator';
-import { PageDto } from 'src/dto/page.dto';
+import { PageDto } from '../../dto/page.dto';
 import { Ride } from '../entities/ride.entity';
 import { RidesPageMetaDto } from './rides-page-meta.dto';
 
