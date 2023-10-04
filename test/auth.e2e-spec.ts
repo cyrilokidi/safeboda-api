@@ -29,15 +29,15 @@ describe('AuthController (e2e)', () => {
   });
 
   describe('/auth/login (POST)', () => {
-    it('should return access token', () => {
+    it('should return access token', async () => {
       const loginDto: LoginDto = {
         email: process.env.ADMIN_EMAIL,
         password: process.env.ADMIN_PASSWORD,
       };
-      request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .post('/auth/login')
-        .send(loginDto)
-        .expect(201);
+        .send(loginDto);
+      expect(response.statusCode).toBe(201);
     });
 
     it('should fail with bad request error', () => {
@@ -59,5 +59,9 @@ describe('AuthController (e2e)', () => {
         .send(loginDto)
         .expect(201);
     });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });

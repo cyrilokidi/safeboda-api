@@ -8,6 +8,7 @@ import { testDbConfig } from '../src/config/db.config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { LoginDto } from '../src/auth/dto/login.dto';
 import { CreateDriverDto } from '../src/drivers/dto/create-driver.dto';
+import { AuthModule } from '../src/auth/auth.module';
 
 describe('DriverController (e2e)', () => {
   let app: INestApplication;
@@ -19,6 +20,7 @@ describe('DriverController (e2e)', () => {
         ConfigModule.forRoot({ isGlobal: true }),
         JwtModule.register({ global: true }),
         TypeOrmModule.forRootAsync(testDbConfig),
+        AuthModule,
         DriversModule,
       ],
       providers: [JwtService],
@@ -36,26 +38,26 @@ describe('DriverController (e2e)', () => {
       email: process.env.ADMIN_EMAIL,
       password: process.env.ADMIN_PASSWORD,
     };
-    const token = await request(app.getHttpServer())
+    const authResponse = await request(app.getHttpServer())
       .post('/auth/login')
       .send(loginDto);
 
-    console.log('token: ', token.status);
-
-    accessToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJva2lkaWN5cmlsQGdtYWlsLmNvbSIsImlhdCI6MTY5NjM5Njk4NywiZXhwIjoxNjk2NDgzMzg3fQ.IxjyYwLdV2WS0mSX8TPQyEvocDQz9mmmofSFi8mQt6g';
+    accessToken = authResponse.body.accessToken as string;
   });
 
-  it('/ (POST)', () => {
+  it('/ (POST)', async () => {
     const createDriverDto: CreateDriverDto = {
       name: 'John Doe',
       phone: '+254700000001',
     };
-    return request(app.getHttpServer())
+    const response = await request(app.getHttpServer())
       .post('/drivers')
       .set('Authorization', `Bearer ${accessToken}`)
-      .send(createDriverDto)
-      .expect(201)
-      .expect('Hello World!');
+      .send(createDriverDto);
+    expect(response.status).toBe(201);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });
