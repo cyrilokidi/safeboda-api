@@ -6,8 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { testDbConfig } from '../src/config/db.config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { LoginDto } from 'src/auth/dto/login.dto';
-import { CreateDriverDto } from 'src/drivers/dto/create-driver.dto';
+import { LoginDto } from '../src/auth/dto/login.dto';
+import { CreateDriverDto } from '../src/drivers/dto/create-driver.dto';
 
 describe('DriverController (e2e)', () => {
   let app: INestApplication;

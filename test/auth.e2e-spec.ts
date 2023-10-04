@@ -4,7 +4,7 @@ import * as request from 'supertest';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthModule } from '../src/auth/auth.module';
-import { LoginDto } from 'src/auth/dto/login.dto';
+import { LoginDto } from '../src/auth/dto/login.dto';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
