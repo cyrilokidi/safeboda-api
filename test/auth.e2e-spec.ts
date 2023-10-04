@@ -46,5 +46,18 @@ describe('AuthController (e2e)', () => {
         .send({})
         .expect(400);
     });
+
+    it('should fail with unauthorized error', () => {
+      const [emailUsername, emailDomain] = process.env.ADMIN_EMAIL.split('@');
+      const reversedEmailUsername = emailUsername.split('').reverse().join('');
+      const loginDto: LoginDto = {
+        email: `${reversedEmailUsername}@${emailDomain}`,
+        password: process.env.ADMIN_PASSWORD,
+      };
+      request(app.getHttpServer())
+        .post('/auth/login')
+        .send(loginDto)
+        .expect(201);
+    });
   });
 });
