@@ -45,7 +45,7 @@ describe('DriverController (e2e)', () => {
     accessToken = authResponse.body.accessToken as string;
   });
 
-  describe('/ (POST)', () => {
+  describe('/drivers (POST)', () => {
     it('should return new driver details', async () => {
       const createDriverDto: CreateDriverDto = {
         name: 'John Doe',
@@ -78,7 +78,7 @@ describe('DriverController (e2e)', () => {
     });
   });
 
-  describe('/:id/suspended (GET)', () => {
+  describe('/drivers/:id/suspended (GET)', () => {
     let driverId: string;
 
     beforeEach(async () => {
@@ -111,6 +111,49 @@ describe('DriverController (e2e)', () => {
     it('should fail with bad request error', async () => {
       const response = await request(app.getHttpServer())
         .post('/drivers/invalidDriverId/suspended')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe('/drivers/:id/suspended (DELETE)', () => {
+    let driverId: string;
+
+    beforeEach(async () => {
+      const createDriverDto: CreateDriverDto = {
+        name: 'Mary Jane',
+        phone: '+254700000004',
+      };
+      const newDriverResponse = await request(app.getHttpServer())
+        .post('/drivers')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(createDriverDto);
+      await request(app.getHttpServer())
+        .post(`/drivers/${newDriverResponse.body.id as string}/suspended`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+      driverId = newDriverResponse.body.id as string;
+    });
+
+    it('should delete driver suspend', async () => {
+      const response = await request(app.getHttpServer())
+        .delete(`/drivers/${driverId}/suspended`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+      expect(response.status).toBe(204);
+    });
+
+    it('should fail with unauthorized error', async () => {
+      const response = await request(app.getHttpServer())
+        .delete(`/drivers/${driverId}/suspended`)
+        .send();
+      expect(response.status).toBe(401);
+    });
+
+    it('should fail with bad request error', async () => {
+      const response = await request(app.getHttpServer())
+        .delete('/drivers/invalidDriverId/suspended')
         .set('Authorization', `Bearer ${accessToken}`)
         .send();
       expect(response.status).toBe(400);
