@@ -78,6 +78,45 @@ describe('DriverController (e2e)', () => {
     });
   });
 
+  describe('/:id/suspended (GET)', () => {
+    let driverId: string;
+
+    beforeEach(async () => {
+      const createDriverDto: CreateDriverDto = {
+        name: 'Simon West',
+        phone: '+254700000003',
+      };
+      const response = await request(app.getHttpServer())
+        .post('/drivers')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(createDriverDto);
+      driverId = response.body.id as string;
+    });
+
+    it('should suspend driver', async () => {
+      const response = await request(app.getHttpServer())
+        .post(`/drivers/${driverId}/suspended`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+      expect(response.status).toBe(204);
+    });
+
+    it('should fail with unauthorized error', async () => {
+      const response = await request(app.getHttpServer())
+        .post(`/drivers/${driverId}/suspended`)
+        .send();
+      expect(response.status).toBe(401);
+    });
+
+    it('should fail with bad request error', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/drivers/invalidDriverId/suspended')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+      expect(response.status).toBe(400);
+    });
+  });
+
   afterAll(async () => {
     await app.close();
   });
