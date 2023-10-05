@@ -6,8 +6,10 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { testDbConfig } from '../src/config/db.config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { LoginDto } from 'src/auth/dto/login.dto';
-import { CreateDriverDto } from 'src/drivers/dto/create-driver.dto';
+import { LoginDto } from '../src/auth/dto/login.dto';
+import { CreateDriverDto } from '../src/drivers/dto/create-driver.dto';
+import { AuthModule } from '../src/auth/auth.module';
+import { faker } from '@faker-js/faker';
 
 describe('DriverController (e2e)', () => {
   let app: INestApplication;
@@ -19,6 +21,7 @@ describe('DriverController (e2e)', () => {
         ConfigModule.forRoot({ isGlobal: true }),
         JwtModule.register({ global: true }),
         TypeOrmModule.forRootAsync(testDbConfig),
+        AuthModule,
         DriversModule,
       ],
       providers: [JwtService],
@@ -36,26 +39,130 @@ describe('DriverController (e2e)', () => {
       email: process.env.ADMIN_EMAIL,
       password: process.env.ADMIN_PASSWORD,
     };
-    const token = await request(app.getHttpServer())
+    const authResponse = await request(app.getHttpServer())
       .post('/auth/login')
       .send(loginDto);
 
-    console.log('token: ', token.status);
-
-    accessToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJva2lkaWN5cmlsQGdtYWlsLmNvbSIsImlhdCI6MTY5NjM5Njk4NywiZXhwIjoxNjk2NDgzMzg3fQ.IxjyYwLdV2WS0mSX8TPQyEvocDQz9mmmofSFi8mQt6g';
+    accessToken = authResponse.body.accessToken as string;
   });
 
-  it('/ (POST)', () => {
-    const createDriverDto: CreateDriverDto = {
-      name: 'John Doe',
-      phone: '+254700000001',
-    };
-    return request(app.getHttpServer())
-      .post('/drivers')
-      .set('Authorization', `Bearer ${accessToken}`)
-      .send(createDriverDto)
-      .expect(201)
-      .expect('Hello World!');
+  describe('/drivers (POST)', () => {
+    it('should return new driver details', async () => {
+      const createDriverDto: CreateDriverDto = {
+        name: faker.person.fullName(),
+        phone: '+254710000001',
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/drivers')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(createDriverDto);
+      expect(response.status).toBe(201);
+    });
+
+    it('should fail with unauthorized error', async () => {
+      const createDriverDto: CreateDriverDto = {
+        name: faker.person.fullName(),
+        phone: '+254710000002',
+      };
+      const response = await request(app.getHttpServer())
+        .post('/drivers')
+        .send(createDriverDto);
+      expect(response.status).toBe(401);
+    });
+
+    it('should fail with bad request error', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/drivers')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({});
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe('/drivers/:id/suspended (GET)', () => {
+    let driverId: string;
+
+    beforeEach(async () => {
+      const createDriverDto: CreateDriverDto = {
+        name: faker.person.fullName(),
+        phone: '+254710000003',
+      };
+      const response = await request(app.getHttpServer())
+        .post('/drivers')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(createDriverDto);
+      driverId = response.body.id as string;
+    });
+
+    it('should suspend driver', async () => {
+      const response = await request(app.getHttpServer())
+        .post(`/drivers/${driverId}/suspended`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+      expect(response.status).toBe(204);
+    });
+
+    it('should fail with unauthorized error', async () => {
+      const response = await request(app.getHttpServer())
+        .post(`/drivers/${driverId}/suspended`)
+        .send();
+      expect(response.status).toBe(401);
+    });
+
+    it('should fail with bad request error', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/drivers/invalidDriverId/suspended')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+      expect(response.status).toBe(400);
+    });
+  });
+
+  describe('/drivers/:id/suspended (DELETE)', () => {
+    let driverId: string;
+
+    beforeEach(async () => {
+      const createDriverDto: CreateDriverDto = {
+        name: faker.person.fullName(),
+        phone: '+254710000004',
+      };
+      const newDriverResponse = await request(app.getHttpServer())
+        .post('/drivers')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(createDriverDto);
+      await request(app.getHttpServer())
+        .post(`/drivers/${newDriverResponse.body.id as string}/suspended`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+      driverId = newDriverResponse.body.id as string;
+    });
+
+    it('should delete driver suspend', async () => {
+      const response = await request(app.getHttpServer())
+        .delete(`/drivers/${driverId}/suspended`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+      expect(response.status).toBe(204);
+    });
+
+    it('should fail with unauthorized error', async () => {
+      const response = await request(app.getHttpServer())
+        .delete(`/drivers/${driverId}/suspended`)
+        .send();
+      expect(response.status).toBe(401);
+    });
+
+    it('should fail with bad request error', async () => {
+      const response = await request(app.getHttpServer())
+        .delete('/drivers/invalidDriverId/suspended')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+      expect(response.status).toBe(400);
+    });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });

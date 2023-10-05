@@ -1,11 +1,11 @@
-import { IsUUID, IsNotEmpty, IsLatitude, IsLongitude } from 'class-validator';
+import { IsNotEmpty, IsLatitude, IsLongitude } from 'class-validator';
 
 export class CreateRideDto {
   @IsLatitude()
   @IsNotEmpty()
   pickupPointLatitude: number;
 
-  @IsLatitude()
+  @IsLongitude()
   @IsNotEmpty()
   pickupPointLongitude: number;
 
@@ -13,7 +13,7 @@ export class CreateRideDto {
   @IsNotEmpty()
   destinationLatitude: number;
 
-  @IsLatitude()
+  @IsLongitude()
   @IsNotEmpty()
   destinationLongitude: number;
 }
