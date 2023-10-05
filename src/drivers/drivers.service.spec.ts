@@ -56,4 +56,22 @@ describe('DriversService', () => {
       expect(response).toBe(undefined);
     });
   });
+
+  describe('Delete suspend driver', () => {
+    let driverId: string;
+
+    beforeEach(async () => {
+      const createDriverDto: CreateDriverDto = {
+        name: faker.person.fullName(),
+        phone: '+25610000003',
+      };
+      const response = await driversService.create(createDriverDto);
+      driverId = response.id;
+    });
+
+    it('should suspend driver', async () => {
+      const response = await driversService.deleteSuspend(driverId);
+      expect(response).toBe(undefined);
+    });
+  });
 });
