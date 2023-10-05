@@ -18,6 +18,8 @@ import { PassengersModule } from '../src/passengers/passengers.module';
 describe('RideController (e2e)', () => {
   let app: INestApplication;
   let accessToken: string;
+  let passengerId: string;
+  let driverId: string;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -50,33 +52,32 @@ describe('RideController (e2e)', () => {
       .send(loginDto);
 
     accessToken = authResponse.body.accessToken as string;
+
+    const createPassengerDto: CreatePassengerDto = {
+      name: faker.person.fullName(),
+      phone: '+254730000001',
+    };
+    const newPassengerResponse = await request(app.getHttpServer())
+      .post('/passengers')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(createPassengerDto);
+
+    passengerId = newPassengerResponse.body.id as string;
+
+    const createDriverDto: CreateDriverDto = {
+      name: faker.person.fullName(),
+      phone: '+254730000001',
+    };
+
+    const newDriverResponse = await request(app.getHttpServer())
+      .post('/drivers')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send(createDriverDto);
+
+    driverId = newDriverResponse.body.id as string;
   });
 
   describe('/rides/:passengerId/:driverId (POST)', () => {
-    let passengerId: string;
-    let driverId: string;
-
-    beforeEach(async () => {
-      const createPassengerDto: CreatePassengerDto = {
-        name: faker.person.fullName(),
-        phone: '+254730000001',
-      };
-      const newPassengerResponse = await request(app.getHttpServer())
-        .post('/passengers')
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send(createPassengerDto);
-      passengerId = newPassengerResponse.body.id as string;
-      const createDriverDto: CreateDriverDto = {
-        name: faker.person.fullName(),
-        phone: '+254730000001',
-      };
-      const newDriverResponse = await request(app.getHttpServer())
-        .post('/drivers')
-        .set('Authorization', `Bearer ${accessToken}`)
-        .send(createDriverDto);
-      driverId = newDriverResponse.body.id as string;
-    });
-
     it('should return new ongoing ride details', async () => {
       const createRideDto: CreateRideDto = {
         pickupPointLatitude: faker.location.latitude(),
