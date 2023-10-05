@@ -112,6 +112,24 @@ describe('RideController (e2e)', () => {
         .send({});
       expect(response.status).toBe(400);
     });
+
+    it('should return new ongoing ride details', async () => {
+      const createRideDto: CreateRideDto = {
+        pickupPointLatitude: faker.location.latitude(),
+        pickupPointLongitude: faker.location.longitude(),
+        destinationLatitude: faker.location.latitude(),
+        destinationLongitude: faker.location.longitude(),
+      };
+      await request(app.getHttpServer())
+        .post(`/rides/${passengerId}/${driverId}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(createRideDto);
+      const response = await request(app.getHttpServer())
+        .post(`/rides/${passengerId}/${driverId}`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(createRideDto);
+      expect(response.status).toBe(409);
+    });
   });
 
   afterAll(async () => {
