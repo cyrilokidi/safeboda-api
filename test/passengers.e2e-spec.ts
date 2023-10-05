@@ -9,6 +9,7 @@ import { LoginDto } from '../src/auth/dto/login.dto';
 import { AuthModule } from '../src/auth/auth.module';
 import { PassengersModule } from '../src/passengers/passengers.module';
 import { CreatePassengerDto } from 'src/passengers/dto/create-passenger.dto';
+import { faker } from '@faker-js/faker';
 
 describe('PassengerController (e2e)', () => {
   let app: INestApplication;
@@ -48,8 +49,8 @@ describe('PassengerController (e2e)', () => {
   describe('/passengers (POST)', () => {
     it('should return new passenger details', async () => {
       const createPassengerDto: CreatePassengerDto = {
-        name: 'Edwin Green',
-        phone: '+254700000005',
+        name: faker.person.fullName(),
+        phone: '+254720000001',
       };
       const response = await request(app.getHttpServer())
         .post('/passengers')
@@ -60,8 +61,8 @@ describe('PassengerController (e2e)', () => {
 
     it('should fail with unauthorized error', async () => {
       const createPassengerDto: CreatePassengerDto = {
-        name: 'Snoop Dogg',
-        phone: '+254700000006',
+        name: faker.person.fullName(),
+        phone: '+254720000002',
       };
       const response = await request(app.getHttpServer())
         .post('/passengers')
