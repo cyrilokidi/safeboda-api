@@ -4,7 +4,7 @@ import * as request from 'supertest';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthModule } from '../src/auth/auth.module';
-import { LoginDto } from 'src/auth/dto/login.dto';
+import { LoginDto } from '../src/auth/dto/login.dto';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
@@ -29,35 +29,39 @@ describe('AuthController (e2e)', () => {
   });
 
   describe('/auth/login (POST)', () => {
-    it('should return access token', () => {
+    it('should return access token', async () => {
       const loginDto: LoginDto = {
         email: process.env.ADMIN_EMAIL,
         password: process.env.ADMIN_PASSWORD,
       };
-      request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .post('/auth/login')
-        .send(loginDto)
-        .expect(201);
+        .send(loginDto);
+      expect(response.statusCode).toBe(201);
     });
 
-    it('should fail with bad request error', () => {
-      return request(app.getHttpServer())
+    it('should fail with bad request error', async () => {
+      const response = await request(app.getHttpServer())
         .post('/auth/login')
-        .send({})
-        .expect(400);
+        .send({});
+      expect(response.statusCode).toBe(400);
     });
 
-    it('should fail with unauthorized error', () => {
+    it('should fail with unauthorized error', async () => {
       const [emailUsername, emailDomain] = process.env.ADMIN_EMAIL.split('@');
       const reversedEmailUsername = emailUsername.split('').reverse().join('');
       const loginDto: LoginDto = {
         email: `${reversedEmailUsername}@${emailDomain}`,
         password: process.env.ADMIN_PASSWORD,
       };
-      request(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .post('/auth/login')
-        .send(loginDto)
-        .expect(201);
+        .send(loginDto);
+      expect(response.statusCode).toBe(401);
     });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });
