@@ -8,12 +8,13 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { testDbConfig } from '../../src/config/db.config';
 import { Ride } from './entities/ride.entity';
+import { CreateRideDto } from './dto/create-ride.dto';
 
 describe('RidesService', () => {
   let ridesService: RidesService;
   let dataSource: DataSource;
-  let driverId: string;
-  let passengerId: string;
+  let passenger: Passenger;
+  let driver: Driver;
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
@@ -28,28 +29,43 @@ describe('RidesService', () => {
     ridesService = moduleRef.get<RidesService>(RidesService);
     dataSource = moduleRef.get<DataSource>(DataSource);
 
-    await dataSource.createQueryBuilder(Driver, 'driver').delete().execute();
     await dataSource
       .createQueryBuilder(Passenger, 'passenger')
       .delete()
       .execute();
-
-    const newDriver = new Driver();
-    newDriver.name = faker.person.fullName();
-    newDriver.phone = '+25710000001';
-    const driver = await dataSource.manager.save(newDriver);
-
-    driverId = driver.id;
+    await dataSource.createQueryBuilder(Driver, 'driver').delete().execute();
 
     const newPassenger = new Passenger();
     newPassenger.name = faker.person.fullName();
     newPassenger.phone = '+25710000001';
-    const passenger = await dataSource.manager.save(newPassenger);
+    passenger = await dataSource.manager.save(newPassenger);
 
-    passengerId = passenger.id;
+    const newDriver = new Driver();
+    newDriver.name = faker.person.fullName();
+    newDriver.phone = '+25710000001';
+    driver = await dataSource.manager.save(newDriver);
   });
 
   it('should be defined', () => {
     expect(ridesService).toBeDefined();
   });
+
+  // it('should return new ride details', async () => {
+  //   const createRideDto: CreateRideDto = {
+  //     pickupPointLatitude: faker.location.latitude(),
+  //     pickupPointLongitude: faker.location.longitude(),
+  //     destinationLatitude: faker.location.latitude(),
+  //     destinationLongitude: faker.location.longitude(),
+  //   };
+  //   const response = await ridesService.create(
+  //     driver.id,
+  //     passenger.id,
+  //     createRideDto,
+  //   );
+  //   expect(response).toEqual({
+  //     id: expect.any(String),
+  //     createdAt: expect.any(Date),
+  //     ...createRideDto,
+  //   });
+  // });
 });
