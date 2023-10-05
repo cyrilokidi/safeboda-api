@@ -38,4 +38,22 @@ describe('DriversService', () => {
       ...createDriverDto,
     });
   });
+
+  describe('Suspend driver', () => {
+    let driverId: string;
+
+    beforeEach(async () => {
+      const createDriverDto: CreateDriverDto = {
+        name: faker.person.fullName(),
+        phone: '+25610000002',
+      };
+      const response = await driversService.create(createDriverDto);
+      driverId = response.id;
+    });
+
+    it('should suspend driver', async () => {
+      const response = await driversService.suspend(driverId);
+      expect(response).toBe(undefined);
+    });
+  });
 });
