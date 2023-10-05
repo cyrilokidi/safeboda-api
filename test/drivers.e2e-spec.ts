@@ -9,6 +9,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { LoginDto } from '../src/auth/dto/login.dto';
 import { CreateDriverDto } from '../src/drivers/dto/create-driver.dto';
 import { AuthModule } from '../src/auth/auth.module';
+import { faker } from '@faker-js/faker';
 
 describe('DriverController (e2e)', () => {
   let app: INestApplication;
@@ -48,9 +49,10 @@ describe('DriverController (e2e)', () => {
   describe('/drivers (POST)', () => {
     it('should return new driver details', async () => {
       const createDriverDto: CreateDriverDto = {
-        name: 'John Doe',
-        phone: '+254700000001',
+        name: faker.person.fullName(),
+        phone: '+254710000001',
       };
+
       const response = await request(app.getHttpServer())
         .post('/drivers')
         .set('Authorization', `Bearer ${accessToken}`)
@@ -60,8 +62,8 @@ describe('DriverController (e2e)', () => {
 
     it('should fail with unauthorized error', async () => {
       const createDriverDto: CreateDriverDto = {
-        name: 'Jane Doe',
-        phone: '+254700000002',
+        name: faker.person.fullName(),
+        phone: '+254710000002',
       };
       const response = await request(app.getHttpServer())
         .post('/drivers')
@@ -83,8 +85,8 @@ describe('DriverController (e2e)', () => {
 
     beforeEach(async () => {
       const createDriverDto: CreateDriverDto = {
-        name: 'Simon West',
-        phone: '+254700000003',
+        name: faker.person.fullName(),
+        phone: '+254710000003',
       };
       const response = await request(app.getHttpServer())
         .post('/drivers')
@@ -122,8 +124,8 @@ describe('DriverController (e2e)', () => {
 
     beforeEach(async () => {
       const createDriverDto: CreateDriverDto = {
-        name: 'Mary Jane',
-        phone: '+254700000004',
+        name: faker.person.fullName(),
+        phone: '+254710000004',
       };
       const newDriverResponse = await request(app.getHttpServer())
         .post('/drivers')
