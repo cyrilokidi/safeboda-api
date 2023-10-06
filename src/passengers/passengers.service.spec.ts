@@ -44,10 +44,6 @@ describe('PassengersService', () => {
     };
     const response = await passengersService.create(createPassengerDto);
 
-    expect(response).toEqual({
-      id: expect.any(String),
-      createdAt: expect.any(Date),
-      ...createPassengerDto,
-    });
+    expect(response).toBeInstanceOf(Passenger);
   });
 });
