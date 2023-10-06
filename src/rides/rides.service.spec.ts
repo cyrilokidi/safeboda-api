@@ -9,12 +9,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { testDbConfig } from '../../src/config/db.config';
 import { ERideStatus, Ride } from './entities/ride.entity';
 import { CreateRideDto } from './dto/create-ride.dto';
+import { RidesPageOptionsDto } from './dto/rides-page-options.dto';
+import { RidesPageMetaDto } from './dto/rides-page-meta.dto';
 
 describe('RidesService', () => {
   let ridesService: RidesService;
   let dataSource: DataSource;
-  let passenger: Passenger;
-  let driver: Driver;
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
@@ -34,16 +34,6 @@ describe('RidesService', () => {
       .delete()
       .execute();
     await dataSource.createQueryBuilder(Driver, 'driver').delete().execute();
-
-    const newPassenger = new Passenger();
-    newPassenger.name = faker.person.fullName();
-    newPassenger.phone = '+25710000001';
-    passenger = await dataSource.manager.save(newPassenger);
-
-    const newDriver = new Driver();
-    newDriver.name = faker.person.fullName();
-    newDriver.phone = '+25710000001';
-    driver = await dataSource.manager.save(newDriver);
   });
 
   it('should be defined', () => {
@@ -51,6 +41,16 @@ describe('RidesService', () => {
   });
 
   it('should return new ride details', async () => {
+    const newPassenger = new Passenger();
+    newPassenger.name = faker.person.fullName();
+    newPassenger.phone = '+25710000001';
+    const passenger = await dataSource.manager.save(newPassenger);
+
+    const newDriver = new Driver();
+    newDriver.name = faker.person.fullName();
+    newDriver.phone = '+25710000001';
+    const driver = await dataSource.manager.save(newDriver);
+
     const createRideDto: CreateRideDto = {
       pickupPointLatitude: faker.location.latitude(),
       pickupPointLongitude: faker.location.longitude(),
@@ -76,6 +76,16 @@ describe('RidesService', () => {
     let ride: Ride;
 
     beforeEach(async () => {
+      const newPassenger = new Passenger();
+      newPassenger.name = faker.person.fullName();
+      newPassenger.phone = '+25710000002';
+      const passenger = await dataSource.manager.save(newPassenger);
+
+      const newDriver = new Driver();
+      newDriver.name = faker.person.fullName();
+      newDriver.phone = '+25710000002';
+      const driver = await dataSource.manager.save(newDriver);
+
       const newRide = new Ride();
       newRide.passenger = passenger;
       newRide.driver = driver;
@@ -96,6 +106,52 @@ describe('RidesService', () => {
         destinationLongitude: String(ride.destinationLongitude),
         status: ERideStatus.DONE,
         createdAt: expect.any(Date),
+      });
+    });
+  });
+
+  describe('Find all ongoing rides', () => {
+    let ride: Ride;
+
+    beforeEach(async () => {
+      const newPassenger = new Passenger();
+      newPassenger.name = faker.person.fullName();
+      newPassenger.phone = '+25710000003';
+      const passenger = await dataSource.manager.save(newPassenger);
+
+      const newDriver = new Driver();
+      newDriver.name = faker.person.fullName();
+      newDriver.phone = '+25710000003';
+      const driver = await dataSource.manager.save(newDriver);
+
+      const newRide = new Ride();
+      newRide.passenger = passenger;
+      newRide.driver = driver;
+      newRide.pickupPointLatitude = faker.location.latitude();
+      newRide.pickupPointLongitude = faker.location.longitude();
+      newRide.destinationLatitude = faker.location.latitude();
+      newRide.destinationLongitude = faker.location.longitude();
+      ride = await dataSource.manager.save(newRide);
+    });
+
+    it('should return all ongoing rides', async () => {
+      const ridesPageOptionsDto = new RidesPageOptionsDto();
+      const response = await ridesService.findAll(ridesPageOptionsDto);
+      // expect(response.data).toContain(ride);
+      expect(response.meta).toBeInstanceOf(RidesPageMetaDto);
+      expect(response).toEqual({
+        data: expect.any(Array),
+        meta: {
+          hasNextPage: expect.any(Boolean),
+          hasPreviousPage: expect.any(Boolean),
+          itemCount: expect.any(Number),
+          keyword: undefined,
+          order: 'DESC',
+          page: expect.any(Number),
+          pageCount: expect.any(Number),
+          sort: 'ride.createdAt',
+          take: expect.any(Number),
+        },
       });
     });
   });
