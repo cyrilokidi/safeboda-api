@@ -5,20 +5,29 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { testDbConfig } from '../../src/config/db.config';
 import { CreateDriverDto } from './dto/create-driver.dto';
 import { faker } from '@faker-js/faker';
+import { DataSource } from 'typeorm';
+import { Driver } from './entities/driver.entity';
+import { Passenger } from '../../src/passengers/entities/passenger.entity';
+import { Ride } from '../../src/rides/entities/ride.entity';
 
 describe('DriversService', () => {
   let driversService: DriversService;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [
         ConfigModule.forRoot({ isGlobal: true }),
         TypeOrmModule.forRootAsync(testDbConfig),
+        TypeOrmModule.forFeature([Driver, Passenger, Ride]),
       ],
       providers: [DriversService],
     }).compile();
 
     driversService = moduleRef.get<DriversService>(DriversService);
+    dataSource = moduleRef.get<DataSource>(DataSource);
+
+    await dataSource.createQueryBuilder(Driver, 'driver').delete().execute();
   });
 
   it('should be defined', () => {

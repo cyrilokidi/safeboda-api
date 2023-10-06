@@ -1,24 +1,34 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { LoginDto } from './dto/login.dto';
+import { ConfigModule } from '@nestjs/config';
 
 describe('AuthService', () => {
-  let service: AuthService;
-
-  const mockJwtService = {};
+  let authService: AuthService;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleRef: TestingModule = await Test.createTestingModule({
+      imports: [ConfigModule.forRoot({ isGlobal: true })],
       providers: [AuthService, JwtService],
-    })
-      .overrideProvider(JwtService)
-      .useValue(mockJwtService)
-      .compile();
+    }).compile();
 
-    service = module.get<AuthService>(AuthService);
+    authService = moduleRef.get<AuthService>(AuthService);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(authService).toBeDefined();
+  });
+
+  it('should return access token', async () => {
+    const loginDto: LoginDto = {
+      email: process.env.ADMIN_EMAIL,
+      password: process.env.ADMIN_PASSWORD,
+    };
+    const response = await authService.login(loginDto);
+    expect(response).toEqual({
+      email: loginDto.email,
+      accessToken: expect.any(String),
+    });
   });
 });
