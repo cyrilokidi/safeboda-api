@@ -49,10 +49,24 @@ JWT_AUTH_ACCESS_TOKEN_SECRET=JwtAuthAccessTokenSecret
 
 ## Start
 
+Run `npm install` to add dependency.
+
+```bash
+$ npm install
+```
+
 Start the application by running the command below in the terminal.
 
 ```bash
 $ npm run start
+```
+
+## Test
+
+Run `npm run test` to run unit tests.
+
+```bash
+$ npm run test
 ```
 
 ### Docker
@@ -67,6 +81,7 @@ $ docker-compose up prod --build -V
 
 ```bash
 DB_HOST=db
+
 ```
 
 ## API Doc
