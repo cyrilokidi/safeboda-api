@@ -49,6 +49,12 @@ JWT_AUTH_ACCESS_TOKEN_SECRET=JwtAuthAccessTokenSecret
 
 ## Start
 
+Run `npm install` to add dependency.
+
+```bash
+$ npm install
+```
+
 Start the application by running the command below in the terminal.
 
 ```bash
