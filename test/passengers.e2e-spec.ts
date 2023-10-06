@@ -8,11 +8,14 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { LoginDto } from '../src/auth/dto/login.dto';
 import { AuthModule } from '../src/auth/auth.module';
 import { PassengersModule } from '../src/passengers/passengers.module';
-import { CreatePassengerDto } from 'src/passengers/dto/create-passenger.dto';
+import { CreatePassengerDto } from '../src/passengers/dto/create-passenger.dto';
 import { faker } from '@faker-js/faker';
+import { Passenger } from '../src/passengers/entities/passenger.entity';
+import { DataSource } from 'typeorm';
 
 describe('PassengerController (e2e)', () => {
   let app: INestApplication;
+  let dataSource: DataSource;
   let accessToken: string;
 
   beforeEach(async () => {
@@ -34,6 +37,13 @@ describe('PassengerController (e2e)', () => {
       }),
     );
     await app.init();
+
+    dataSource = await moduleFixture.resolve<DataSource>(DataSource);
+
+    await dataSource
+      .createQueryBuilder(Passenger, 'passenger')
+      .delete()
+      .execute();
 
     const loginDto: LoginDto = {
       email: process.env.ADMIN_EMAIL,

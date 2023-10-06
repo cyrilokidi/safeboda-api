@@ -10,9 +10,12 @@ import { LoginDto } from '../src/auth/dto/login.dto';
 import { CreateDriverDto } from '../src/drivers/dto/create-driver.dto';
 import { AuthModule } from '../src/auth/auth.module';
 import { faker } from '@faker-js/faker';
+import { DataSource } from 'typeorm';
+import { Driver } from '../src/drivers/entities/driver.entity';
 
 describe('DriverController (e2e)', () => {
   let app: INestApplication;
+  let dataSource: DataSource;
   let accessToken: string;
 
   beforeEach(async () => {
@@ -34,6 +37,10 @@ describe('DriverController (e2e)', () => {
       }),
     );
     await app.init();
+
+    dataSource = await moduleFixture.resolve<DataSource>(DataSource);
+
+    await dataSource.createQueryBuilder(Driver, 'driver').delete().execute();
 
     const loginDto: LoginDto = {
       email: process.env.ADMIN_EMAIL,
