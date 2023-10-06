@@ -71,4 +71,32 @@ describe('RidesService', () => {
       ...createRideDto,
     });
   });
+
+  describe('Stop ongoing ride', () => {
+    let ride: Ride;
+
+    beforeEach(async () => {
+      const newRide = new Ride();
+      newRide.passenger = passenger;
+      newRide.driver = driver;
+      newRide.pickupPointLatitude = faker.location.latitude();
+      newRide.pickupPointLongitude = faker.location.longitude();
+      newRide.destinationLatitude = faker.location.latitude();
+      newRide.destinationLongitude = faker.location.longitude();
+      ride = await dataSource.manager.save(newRide);
+    });
+
+    it('should return details of stopped ride', async () => {
+      const response = await ridesService.stopRide(ride.id);
+      expect(response).toEqual({
+        id: expect.any(String),
+        pickupPointLatitude: String(ride.pickupPointLatitude),
+        pickupPointLongitude: String(ride.pickupPointLongitude),
+        destinationLatitude: String(ride.destinationLatitude),
+        destinationLongitude: String(ride.destinationLongitude),
+        status: ERideStatus.DONE,
+        createdAt: expect.any(Date),
+      });
+    });
+  });
 });
