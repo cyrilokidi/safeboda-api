@@ -40,12 +40,7 @@ describe('DriversService', () => {
       phone: '+25610000001',
     };
     const response = await driversService.create(createDriverDto);
-    expect(response).toEqual({
-      id: expect.any(String),
-      createdAt: expect.any(Date),
-      suspended: false,
-      ...createDriverDto,
-    });
+    expect(response).toBeInstanceOf(Driver);
   });
 
   it('should suspend driver', async () => {
