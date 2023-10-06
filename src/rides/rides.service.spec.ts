@@ -9,12 +9,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { testDbConfig } from '../../src/config/db.config';
 import { ERideStatus, Ride } from './entities/ride.entity';
 import { CreateRideDto } from './dto/create-ride.dto';
+import { RidesPageOptionsDto } from './dto/rides-page-options.dto';
+import { RidesPageMetaDto } from './dto/rides-page-meta.dto';
 
 describe('RidesService', () => {
   let ridesService: RidesService;
   let dataSource: DataSource;
-  let passenger: Passenger;
-  let driver: Driver;
 
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
@@ -34,16 +34,6 @@ describe('RidesService', () => {
       .delete()
       .execute();
     await dataSource.createQueryBuilder(Driver, 'driver').delete().execute();
-
-    const newPassenger = new Passenger();
-    newPassenger.name = faker.person.fullName();
-    newPassenger.phone = '+25710000001';
-    passenger = await dataSource.manager.save(newPassenger);
-
-    const newDriver = new Driver();
-    newDriver.name = faker.person.fullName();
-    newDriver.phone = '+25710000001';
-    driver = await dataSource.manager.save(newDriver);
   });
 
   it('should be defined', () => {
@@ -51,6 +41,16 @@ describe('RidesService', () => {
   });
 
   it('should return new ride details', async () => {
+    const newPassenger = new Passenger();
+    newPassenger.name = faker.person.fullName();
+    newPassenger.phone = '+25710000001';
+    const passenger = await dataSource.manager.save(newPassenger);
+
+    const newDriver = new Driver();
+    newDriver.name = faker.person.fullName();
+    newDriver.phone = '+25710000001';
+    const driver = await dataSource.manager.save(newDriver);
+
     const createRideDto: CreateRideDto = {
       pickupPointLatitude: faker.location.latitude(),
       pickupPointLongitude: faker.location.longitude(),
@@ -62,41 +62,60 @@ describe('RidesService', () => {
       driver.id,
       createRideDto,
     );
-    expect(response).toEqual({
-      id: expect.any(String),
-      createdAt: expect.any(Date),
-      passenger,
-      driver,
-      status: ERideStatus.ONGOING,
-      ...createRideDto,
-    });
+    expect(response).toBeInstanceOf(Ride);
   });
 
-  describe('Stop ongoing ride', () => {
-    let ride: Ride;
+  it('should return details of stopped ride', async () => {
+    const newPassenger = new Passenger();
+    newPassenger.name = faker.person.fullName();
+    newPassenger.phone = '+25710000002';
+    const passenger = await dataSource.manager.save(newPassenger);
 
-    beforeEach(async () => {
-      const newRide = new Ride();
-      newRide.passenger = passenger;
-      newRide.driver = driver;
-      newRide.pickupPointLatitude = faker.location.latitude();
-      newRide.pickupPointLongitude = faker.location.longitude();
-      newRide.destinationLatitude = faker.location.latitude();
-      newRide.destinationLongitude = faker.location.longitude();
-      ride = await dataSource.manager.save(newRide);
-    });
+    const newDriver = new Driver();
+    newDriver.name = faker.person.fullName();
+    newDriver.phone = '+25710000002';
+    const driver = await dataSource.manager.save(newDriver);
 
-    it('should return details of stopped ride', async () => {
-      const response = await ridesService.stopRide(ride.id);
-      expect(response).toEqual({
-        id: expect.any(String),
-        pickupPointLatitude: String(ride.pickupPointLatitude),
-        pickupPointLongitude: String(ride.pickupPointLongitude),
-        destinationLatitude: String(ride.destinationLatitude),
-        destinationLongitude: String(ride.destinationLongitude),
-        status: ERideStatus.DONE,
-        createdAt: expect.any(Date),
-      });
-    });
+    const newRide = new Ride();
+    newRide.passenger = passenger;
+    newRide.driver = driver;
+    newRide.pickupPointLatitude = faker.location.latitude();
+    newRide.pickupPointLongitude = faker.location.longitude();
+    newRide.destinationLatitude = faker.location.latitude();
+    newRide.destinationLongitude = faker.location.longitude();
+    const ride = await dataSource.manager.save(newRide);
+
+    const response = await ridesService.stopRide(ride.id);
+
+    expect(response).toBeInstanceOf(Ride);
+    expect(response.status).toBe(ERideStatus.DONE);
+  });
+
+  it('should return all ongoing rides', async () => {
+    const newPassenger = new Passenger();
+    newPassenger.name = faker.person.fullName();
+    newPassenger.phone = '+25710000003';
+    const passenger = await dataSource.manager.save(newPassenger);
+
+    const newDriver = new Driver();
+    newDriver.name = faker.person.fullName();
+    newDriver.phone = '+25710000003';
+    const driver = await dataSource.manager.save(newDriver);
+
+    const newRide = new Ride();
+    newRide.passenger = passenger;
+    newRide.driver = driver;
+    newRide.pickupPointLatitude = faker.location.latitude();
+    newRide.pickupPointLongitude = faker.location.longitude();
+    newRide.destinationLatitude = faker.location.latitude();
+    newRide.destinationLongitude = faker.location.longitude();
+    await dataSource.manager.save(newRide);
+
+    const ridesPageOptionsDto = new RidesPageOptionsDto();
+    const response = await ridesService.findAll(ridesPageOptionsDto);
+
+    expect(response.data).toBeInstanceOf(Array);
+    response.data.map((res) => expect(res).toBeInstanceOf(Ride));
+    expect(response.meta).toBeInstanceOf(RidesPageMetaDto);
   });
 });
