@@ -20,13 +20,18 @@ Safeboda NodeJS backend API coding challenge.
 - Copy and paste the content below into the new file (Replace with your relevant environment values where necessary).
 
 ```bash
-# Environment variables.
-
 # App. config.
-NODE_ENV=production
+NODE_ENV=development
 SERVER_PORT=3000
 
 # Database config.
+TEST_DB_HOST=localhost
+TEST_DB_PORT=5432
+TEST_DB_USERNAME=postgres
+TEST_DB_PASSWORD=password
+TEST_DB_NAME=safeboda
+TEST_DB_SCHEMA=test
+
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres
@@ -50,7 +55,9 @@ Start the application by running the command below in the terminal.
 $ npm run start
 ```
 
-> Alternatively, you can start the application using `docker-compose` by running the command below in the terminal.
+### Docker
+
+Alternatively, you can start the application using `docker-compose` by running the command below in the terminal.
 
 ```bash
 $ docker-compose up prod --build -V
