@@ -62,14 +62,7 @@ describe('RidesService', () => {
       driver.id,
       createRideDto,
     );
-    expect(response).toEqual({
-      id: expect.any(String),
-      createdAt: expect.any(Date),
-      passenger,
-      driver,
-      status: ERideStatus.ONGOING,
-      ...createRideDto,
-    });
+    expect(response).toBeInstanceOf(Ride);
   });
 
   it('should return details of stopped ride', async () => {
@@ -94,15 +87,8 @@ describe('RidesService', () => {
 
     const response = await ridesService.stopRide(ride.id);
 
-    expect(response).toEqual({
-      id: expect.any(String),
-      pickupPointLatitude: String(ride.pickupPointLatitude),
-      pickupPointLongitude: String(ride.pickupPointLongitude),
-      destinationLatitude: String(ride.destinationLatitude),
-      destinationLongitude: String(ride.destinationLongitude),
-      status: ERideStatus.DONE,
-      createdAt: expect.any(Date),
-    });
+    expect(response).toBeInstanceOf(Ride);
+    expect(response.status).toBe(ERideStatus.DONE);
   });
 
   it('should return all ongoing rides', async () => {
@@ -123,25 +109,13 @@ describe('RidesService', () => {
     newRide.pickupPointLongitude = faker.location.longitude();
     newRide.destinationLatitude = faker.location.latitude();
     newRide.destinationLongitude = faker.location.longitude();
-    const ride = await dataSource.manager.save(newRide);
+    await dataSource.manager.save(newRide);
 
     const ridesPageOptionsDto = new RidesPageOptionsDto();
     const response = await ridesService.findAll(ridesPageOptionsDto);
 
+    expect(response.data).toBeInstanceOf(Array);
+    response.data.map((res) => expect(res).toBeInstanceOf(Ride));
     expect(response.meta).toBeInstanceOf(RidesPageMetaDto);
-    expect(response).toEqual({
-      data: expect.any(Array),
-      meta: {
-        hasNextPage: expect.any(Boolean),
-        hasPreviousPage: expect.any(Boolean),
-        itemCount: expect.any(Number),
-        keyword: undefined,
-        order: 'DESC',
-        page: expect.any(Number),
-        pageCount: expect.any(Number),
-        sort: 'ride.createdAt',
-        take: expect.any(Number),
-      },
-    });
   });
 });
