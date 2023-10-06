@@ -48,39 +48,27 @@ describe('DriversService', () => {
     });
   });
 
-  describe('Suspend driver', () => {
-    let driverId: string;
+  it('should suspend driver', async () => {
+    const createDriverDto: CreateDriverDto = {
+      name: faker.person.fullName(),
+      phone: '+25610000002',
+    };
+    const driver = await driversService.create(createDriverDto);
 
-    beforeEach(async () => {
-      const createDriverDto: CreateDriverDto = {
-        name: faker.person.fullName(),
-        phone: '+25610000002',
-      };
-      const response = await driversService.create(createDriverDto);
-      driverId = response.id;
-    });
+    const response = await driversService.suspend(driver.id);
 
-    it('should suspend driver', async () => {
-      const response = await driversService.suspend(driverId);
-      expect(response).toBe(undefined);
-    });
+    expect(response).toBe(undefined);
   });
 
-  describe('Delete suspend driver', () => {
-    let driverId: string;
+  it('should suspend driver', async () => {
+    const createDriverDto: CreateDriverDto = {
+      name: faker.person.fullName(),
+      phone: '+25610000003',
+    };
+    const driver = await driversService.create(createDriverDto);
 
-    beforeEach(async () => {
-      const createDriverDto: CreateDriverDto = {
-        name: faker.person.fullName(),
-        phone: '+25610000003',
-      };
-      const response = await driversService.create(createDriverDto);
-      driverId = response.id;
-    });
+    const response = await driversService.deleteSuspend(driver.id);
 
-    it('should suspend driver', async () => {
-      const response = await driversService.deleteSuspend(driverId);
-      expect(response).toBe(undefined);
-    });
+    expect(response).toBe(undefined);
   });
 });
