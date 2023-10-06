@@ -7,7 +7,7 @@ import { faker } from '@faker-js/faker';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { testDbConfig } from '../../src/config/db.config';
-import { Ride } from './entities/ride.entity';
+import { ERideStatus, Ride } from './entities/ride.entity';
 import { CreateRideDto } from './dto/create-ride.dto';
 
 describe('RidesService', () => {
@@ -50,22 +50,25 @@ describe('RidesService', () => {
     expect(ridesService).toBeDefined();
   });
 
-  // it('should return new ride details', async () => {
-  //   const createRideDto: CreateRideDto = {
-  //     pickupPointLatitude: faker.location.latitude(),
-  //     pickupPointLongitude: faker.location.longitude(),
-  //     destinationLatitude: faker.location.latitude(),
-  //     destinationLongitude: faker.location.longitude(),
-  //   };
-  //   const response = await ridesService.create(
-  //     driver.id,
-  //     passenger.id,
-  //     createRideDto,
-  //   );
-  //   expect(response).toEqual({
-  //     id: expect.any(String),
-  //     createdAt: expect.any(Date),
-  //     ...createRideDto,
-  //   });
-  // });
+  it('should return new ride details', async () => {
+    const createRideDto: CreateRideDto = {
+      pickupPointLatitude: faker.location.latitude(),
+      pickupPointLongitude: faker.location.longitude(),
+      destinationLatitude: faker.location.latitude(),
+      destinationLongitude: faker.location.longitude(),
+    };
+    const response = await ridesService.create(
+      passenger.id,
+      driver.id,
+      createRideDto,
+    );
+    expect(response).toEqual({
+      id: expect.any(String),
+      createdAt: expect.any(Date),
+      passenger,
+      driver,
+      status: ERideStatus.ONGOING,
+      ...createRideDto,
+    });
+  });
 });
