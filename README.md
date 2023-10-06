@@ -61,6 +61,14 @@ Start the application by running the command below in the terminal.
 $ npm run start
 ```
 
+## Test
+
+Run `npm run test` to run unit tests.
+
+```bash
+$ npm run test
+```
+
 ### Docker
 
 Alternatively, you can start the application using `docker-compose` by running the command below in the terminal.
@@ -73,6 +81,7 @@ $ docker-compose up prod --build -V
 
 ```bash
 DB_HOST=db
+
 ```
 
 ## API Doc
