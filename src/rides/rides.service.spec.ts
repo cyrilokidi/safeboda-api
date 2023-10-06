@@ -72,80 +72,76 @@ describe('RidesService', () => {
     });
   });
 
-  describe('Stop ongoing ride', () => {
-    it('should return details of stopped ride', async () => {
-      const newPassenger = new Passenger();
-      newPassenger.name = faker.person.fullName();
-      newPassenger.phone = '+25710000002';
-      const passenger = await dataSource.manager.save(newPassenger);
+  it('should return details of stopped ride', async () => {
+    const newPassenger = new Passenger();
+    newPassenger.name = faker.person.fullName();
+    newPassenger.phone = '+25710000002';
+    const passenger = await dataSource.manager.save(newPassenger);
 
-      const newDriver = new Driver();
-      newDriver.name = faker.person.fullName();
-      newDriver.phone = '+25710000002';
-      const driver = await dataSource.manager.save(newDriver);
+    const newDriver = new Driver();
+    newDriver.name = faker.person.fullName();
+    newDriver.phone = '+25710000002';
+    const driver = await dataSource.manager.save(newDriver);
 
-      const newRide = new Ride();
-      newRide.passenger = passenger;
-      newRide.driver = driver;
-      newRide.pickupPointLatitude = faker.location.latitude();
-      newRide.pickupPointLongitude = faker.location.longitude();
-      newRide.destinationLatitude = faker.location.latitude();
-      newRide.destinationLongitude = faker.location.longitude();
-      const ride = await dataSource.manager.save(newRide);
+    const newRide = new Ride();
+    newRide.passenger = passenger;
+    newRide.driver = driver;
+    newRide.pickupPointLatitude = faker.location.latitude();
+    newRide.pickupPointLongitude = faker.location.longitude();
+    newRide.destinationLatitude = faker.location.latitude();
+    newRide.destinationLongitude = faker.location.longitude();
+    const ride = await dataSource.manager.save(newRide);
 
-      const response = await ridesService.stopRide(ride.id);
+    const response = await ridesService.stopRide(ride.id);
 
-      expect(response).toEqual({
-        id: expect.any(String),
-        pickupPointLatitude: String(ride.pickupPointLatitude),
-        pickupPointLongitude: String(ride.pickupPointLongitude),
-        destinationLatitude: String(ride.destinationLatitude),
-        destinationLongitude: String(ride.destinationLongitude),
-        status: ERideStatus.DONE,
-        createdAt: expect.any(Date),
-      });
+    expect(response).toEqual({
+      id: expect.any(String),
+      pickupPointLatitude: String(ride.pickupPointLatitude),
+      pickupPointLongitude: String(ride.pickupPointLongitude),
+      destinationLatitude: String(ride.destinationLatitude),
+      destinationLongitude: String(ride.destinationLongitude),
+      status: ERideStatus.DONE,
+      createdAt: expect.any(Date),
     });
   });
 
-  describe('Find all ongoing rides', () => {
-    it('should return all ongoing rides', async () => {
-      const newPassenger = new Passenger();
-      newPassenger.name = faker.person.fullName();
-      newPassenger.phone = '+25710000003';
-      const passenger = await dataSource.manager.save(newPassenger);
+  it('should return all ongoing rides', async () => {
+    const newPassenger = new Passenger();
+    newPassenger.name = faker.person.fullName();
+    newPassenger.phone = '+25710000003';
+    const passenger = await dataSource.manager.save(newPassenger);
 
-      const newDriver = new Driver();
-      newDriver.name = faker.person.fullName();
-      newDriver.phone = '+25710000003';
-      const driver = await dataSource.manager.save(newDriver);
+    const newDriver = new Driver();
+    newDriver.name = faker.person.fullName();
+    newDriver.phone = '+25710000003';
+    const driver = await dataSource.manager.save(newDriver);
 
-      const newRide = new Ride();
-      newRide.passenger = passenger;
-      newRide.driver = driver;
-      newRide.pickupPointLatitude = faker.location.latitude();
-      newRide.pickupPointLongitude = faker.location.longitude();
-      newRide.destinationLatitude = faker.location.latitude();
-      newRide.destinationLongitude = faker.location.longitude();
-      const ride = await dataSource.manager.save(newRide);
+    const newRide = new Ride();
+    newRide.passenger = passenger;
+    newRide.driver = driver;
+    newRide.pickupPointLatitude = faker.location.latitude();
+    newRide.pickupPointLongitude = faker.location.longitude();
+    newRide.destinationLatitude = faker.location.latitude();
+    newRide.destinationLongitude = faker.location.longitude();
+    const ride = await dataSource.manager.save(newRide);
 
-      const ridesPageOptionsDto = new RidesPageOptionsDto();
-      const response = await ridesService.findAll(ridesPageOptionsDto);
+    const ridesPageOptionsDto = new RidesPageOptionsDto();
+    const response = await ridesService.findAll(ridesPageOptionsDto);
 
-      expect(response.meta).toBeInstanceOf(RidesPageMetaDto);
-      expect(response).toEqual({
-        data: expect.any(Array),
-        meta: {
-          hasNextPage: expect.any(Boolean),
-          hasPreviousPage: expect.any(Boolean),
-          itemCount: expect.any(Number),
-          keyword: undefined,
-          order: 'DESC',
-          page: expect.any(Number),
-          pageCount: expect.any(Number),
-          sort: 'ride.createdAt',
-          take: expect.any(Number),
-        },
-      });
+    expect(response.meta).toBeInstanceOf(RidesPageMetaDto);
+    expect(response).toEqual({
+      data: expect.any(Array),
+      meta: {
+        hasNextPage: expect.any(Boolean),
+        hasPreviousPage: expect.any(Boolean),
+        itemCount: expect.any(Number),
+        keyword: undefined,
+        order: 'DESC',
+        page: expect.any(Number),
+        pageCount: expect.any(Number),
+        sort: 'ride.createdAt',
+        take: expect.any(Number),
+      },
     });
   });
 });
