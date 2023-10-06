@@ -73,9 +73,7 @@ describe('RidesService', () => {
   });
 
   describe('Stop ongoing ride', () => {
-    let ride: Ride;
-
-    beforeEach(async () => {
+    it('should return details of stopped ride', async () => {
       const newPassenger = new Passenger();
       newPassenger.name = faker.person.fullName();
       newPassenger.phone = '+25710000002';
@@ -93,11 +91,10 @@ describe('RidesService', () => {
       newRide.pickupPointLongitude = faker.location.longitude();
       newRide.destinationLatitude = faker.location.latitude();
       newRide.destinationLongitude = faker.location.longitude();
-      ride = await dataSource.manager.save(newRide);
-    });
+      const ride = await dataSource.manager.save(newRide);
 
-    it('should return details of stopped ride', async () => {
       const response = await ridesService.stopRide(ride.id);
+
       expect(response).toEqual({
         id: expect.any(String),
         pickupPointLatitude: String(ride.pickupPointLatitude),
@@ -111,9 +108,7 @@ describe('RidesService', () => {
   });
 
   describe('Find all ongoing rides', () => {
-    let ride: Ride;
-
-    beforeEach(async () => {
+    it('should return all ongoing rides', async () => {
       const newPassenger = new Passenger();
       newPassenger.name = faker.person.fullName();
       newPassenger.phone = '+25710000003';
@@ -131,13 +126,11 @@ describe('RidesService', () => {
       newRide.pickupPointLongitude = faker.location.longitude();
       newRide.destinationLatitude = faker.location.latitude();
       newRide.destinationLongitude = faker.location.longitude();
-      ride = await dataSource.manager.save(newRide);
-    });
+      const ride = await dataSource.manager.save(newRide);
 
-    it('should return all ongoing rides', async () => {
       const ridesPageOptionsDto = new RidesPageOptionsDto();
       const response = await ridesService.findAll(ridesPageOptionsDto);
-      // expect(response.data).toContain(ride);
+
       expect(response.meta).toBeInstanceOf(RidesPageMetaDto);
       expect(response).toEqual({
         data: expect.any(Array),
