@@ -29,14 +29,14 @@ DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=password
-DB_NAME=safeboda
+DB_NAME=safeboda-db
 DB_SCHEMA=public
 
-TEST_DB_HOST=localhost
+TEST_DB_HOST=test-db
 TEST_DB_PORT=5432
 TEST_DB_USERNAME=postgres
 TEST_DB_PASSWORD=password
-TEST_DB_NAME=safeboda
+TEST_DB_NAME=safeboda-db
 TEST_DB_SCHEMA=test
 
 # Admin. config.
@@ -74,14 +74,7 @@ $ npm run test
 Alternatively, you can start the application using `docker-compose` by running the command below in the terminal.
 
 ```bash
-$ docker-compose up prod --build -V
-```
-
-> Ensure to replace `DB_HOST` environment variable value to `db` as shown below in order to use application database service
-
-```bash
-DB_HOST=db
-
+$ docker-compose up --build -V
 ```
 
 ## API Doc
